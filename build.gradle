@@ -1,0 +1,44 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+plugins {
+    id 'java'
+    id 'eclipse'
+}
+
+version = '1.0.0'
+
+sourceCompatibility = 1.11
+targetCompatibility = 1.11
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        filter ReplaceTokens, tokens: [version: version]
+    }
+}
+
+repositories {
+	jcenter()
+    maven{ url "https://hub.spigotmc.org/nexus/content/repositories/snapshots" }
+    maven{ url "https://oss.sonatype.org/content/repositories/snapshots" }
+	maven { url 'https://jitpack.io' }
+    mavenLocal()
+}
+
+dependencies {
+    //Dev only:
+    //compileOnly 'nl.thedutchmc:dutchycore:0.0.15'
+    //bug in jitpack, cant use nl.thedutchmc here :/
+    compileOnly 'com.github.DutchyPlugins:Dutchycore:0.0.16'
+    compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
+}
+
+task ghActions(type: Jar) {
+	description 'GitHub Actions task. Not used for regular development'
+	version = ''
+	archiveClassifier = ''
+	archiveBaseName = 'output'
+
+	from sourceSets.main.output
+
+	destinationDirectory = file("$rootDir/actions")
+}

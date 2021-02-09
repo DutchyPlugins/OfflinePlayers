@@ -1,0 +1,5 @@
+main: nl.thedutchmc.offlineplayers.OfflinePlayers
+name: OfflinePlayers
+version: @version@
+author: Tobias de Bruijn
+infourl: https://github.com/DutchyPlugins/OfflinePlayers
