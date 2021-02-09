@@ -17,7 +17,10 @@ import nl.thedutchmc.offlineplayers.tabcompleters.TransferCommandTabCompleter;
 
 public class OfflinePlayers extends PluginModule {
 
-	//k = newUserName, v = oldUserName
+	/**
+	 * Key = newUserName<br>
+	 * Value = OldUserName
+	 */
 	private HashMap<String, String> pendingTransfers = new HashMap<>();
 	
 	//Name of the world
@@ -32,7 +35,7 @@ public class OfflinePlayers extends PluginModule {
 			super.logWarn("OfflinePlayers is not ment to be used on servers running in online mode. Aborting initialization.");
 			return;
 		}
-		
+						
 		//Determine the 'level-name' using Reflection
 		//First we need to get the method getProperties() in the CraftServer class
 		Method getPropertiesMethod = null;

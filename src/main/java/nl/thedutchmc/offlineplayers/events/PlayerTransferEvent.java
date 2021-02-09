@@ -3,32 +3,17 @@ package nl.thedutchmc.offlineplayers.events;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
+import nl.thedutchmc.dutchycore.module.events.ModuleEvent;
 
-public class PlayerTransferEvent extends Event {
+public class PlayerTransferEvent extends ModuleEvent {
 	
-    private static final HandlerList HANDLERS = new HandlerList();
     private String oldUsername, newUsername;
     
-    /**
-     * @param oldUsername The old username of the player
-     * @param newUsername The new username of the player
-     */
     public PlayerTransferEvent(String oldUsername, String newUsername) {
-		this.oldUsername = oldUsername;
-		this.newUsername = newUsername;
-	}
-    
-	@Override
-	public HandlerList getHandlers() {
-		return HANDLERS;
-	}
-	
-    public static HandlerList getHandlerList() {
-        return HANDLERS;
+    	this.oldUsername = oldUsername;
+    	this.newUsername = newUsername;
     }
-	
+    
     /**
      * Get the old username of the player being transfered
      * @return Returns the old username

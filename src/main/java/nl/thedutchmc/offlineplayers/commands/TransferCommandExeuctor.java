@@ -95,7 +95,7 @@ public class TransferCommandExeuctor implements ModuleCommand {
 			transferPlayerDataFile(toTransfer.getName(), newUserName);
 			
 			//Fire a player transfer event
-			Bukkit.getPluginManager().callEvent(new PlayerTransferEvent(toTransfer.getName(), newUserName));
+			this.module.throwModuleEvent(new PlayerTransferEvent(toTransfer.getName(), newUserName));
 			
 			//Send a message to the user letting them know what we did
 			String message = ChatColor.GOLD + "Registered %s as new username for %s. They should now log in with their new username.";
@@ -132,7 +132,7 @@ public class TransferCommandExeuctor implements ModuleCommand {
 			player.kickPlayer(String.format(message, newUserName));
 			
 			//Fire a transfer event
-			Bukkit.getPluginManager().callEvent(new PlayerTransferEvent(player.getName(), newUserName));
+			this.module.throwModuleEvent(new PlayerTransferEvent(sender.getName(), newUserName));
 			
 			//Transfer the playerdata file
 			transferPlayerDataFile(player.getName(), newUserName);
