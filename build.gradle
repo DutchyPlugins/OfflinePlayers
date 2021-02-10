@@ -7,10 +7,12 @@ plugins {
 }
 
 group = 'nl.thedutchmc'
-version = '1.1.0'
+version = '1.1.1'
 
 sourceCompatibility = 1.11
 targetCompatibility = 1.11
+
+
 
 processResources {
     from(sourceSets.main.resources.srcDirs) {
@@ -28,10 +30,10 @@ repositories {
 
 dependencies {
     //Dev only:
-    //compileOnly 'nl.thedutchmc:dutchycore:0.0.33'
+    //compileOnly 'nl.thedutchmc:dutchycore:0.0.38'
     
     //bug in jitpack, cant use nl.thedutchmc here :/
-    compileOnly 'com.github.DutchyPlugins:DutchyCore:0.0.34'
+    compileOnly 'com.github.DutchyPlugins:DutchyCore:0.0.47'
     
     //Spigot API
     compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
