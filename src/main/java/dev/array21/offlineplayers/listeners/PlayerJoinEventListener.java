@@ -1,4 +1,4 @@
-package nl.thedutchmc.offlineplayers.listeners;
+package dev.array21.offlineplayers.listeners;
 
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
@@ -6,9 +6,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import nl.thedutchmc.dutchycore.Triple;
-import nl.thedutchmc.dutchycore.utils.Utils;
-import nl.thedutchmc.offlineplayers.OfflinePlayers;
+import dev.array21.dutchycore.Triple;
+import dev.array21.dutchycore.utils.Utils;
+import dev.array21.offlineplayers.OfflinePlayers;
 
 public class PlayerJoinEventListener implements Listener {
 

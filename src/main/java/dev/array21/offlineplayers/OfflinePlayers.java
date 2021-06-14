@@ -1,20 +1,21 @@
-package nl.thedutchmc.offlineplayers;
+package dev.array21.offlineplayers;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.permissions.PermissionDefault;
 
-import nl.thedutchmc.dutchycore.DutchyCore;
-import nl.thedutchmc.dutchycore.module.PluginModule;
-import nl.thedutchmc.dutchycore.annotations.Nullable;
-import nl.thedutchmc.offlineplayers.commands.TransferCommandExeuctor;
-import nl.thedutchmc.offlineplayers.listeners.PlayerJoinEventListener;
-import nl.thedutchmc.offlineplayers.tabcompleters.TransferCommandTabCompleter;
+import dev.array21.bukkitreflectionlib.ReflectionUtil;
+import dev.array21.dutchycore.DutchyCore;
+import dev.array21.dutchycore.module.PluginModule;
+import dev.array21.dutchycore.utils.Utils;
+import dev.array21.offlineplayers.commands.TransferCommandExeuctor;
+import dev.array21.offlineplayers.listeners.PlayerJoinEventListener;
+import dev.array21.offlineplayers.tabcompleters.TransferCommandTabCompleter;
+import dev.array21.dutchycore.annotations.Nullable;
+import dev.array21.dutchycore.annotations.RegisterModule;
 
+@RegisterModule(name = "OfflinePlayers", version = "@VERSION@", author = "Dutchy76", infoUrl = "https://github.com/DutchyPlugins/OfflinePlayers")
 public class OfflinePlayers extends PluginModule {
 
 	/**
@@ -35,49 +36,18 @@ public class OfflinePlayers extends PluginModule {
 			super.logWarn("OfflinePlayers is not ment to be used on servers running in online mode. Aborting initialization.");
 			return;
 		}
-						
-		//Determine the 'level-name' using Reflection
-		//First we need to get the method getProperties() in the CraftServer class
-		Method getPropertiesMethod = null;
+		
 		try {
-			getPropertiesMethod = Bukkit.getServer().getClass().getDeclaredMethod("getProperties");
-		} catch (NoSuchMethodException | SecurityException e) {
-			e.printStackTrace();
+			Object properties = ReflectionUtil.getObject(Bukkit.getServer(), Bukkit.getServer().getClass(), "getProperties");
+			if(ReflectionUtil.isUseNewSpigotPackaging()) {
+				this.levelName = (String) ReflectionUtil.getObject(properties, "p");
+			} else {
+				this.levelName = (String) ReflectionUtil.getObject(properties, "levelName");
+			}
+		} catch(Exception e) {
+			super.logWarn("Failed to load. Unable to get levelName.");
+			super.logWarn(Utils.getStackTrace(e));
 		}
-		
-		//It's a private method, so we need to make it accessible
-		getPropertiesMethod.setAccessible(true);
-		
-		//Invoke the method. This returns an instance of DedicatedServerProperties
-		//CraftServer#getProperties()
-		Object dedicatedServerProperties = null;
-		try {
-			dedicatedServerProperties = getPropertiesMethod.invoke(Bukkit.getServer());
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			e.printStackTrace();
-		}
-		
-		//Disable access to the getProperties() method again
-		getPropertiesMethod.setAccessible(false);
-		
-		//We need to get the field levelName in the DedicatedServerProperties class
-		Field levelNameField = null;
-		try {
-			levelNameField = dedicatedServerProperties.getClass().getField("levelName");
-		} catch (NoSuchFieldException | SecurityException e) {
-			e.printStackTrace();
-		}
-
-		//Get the value of the field levelName in the DedicatedServerProperties class
-		//DedicatedServerProperties#levelName
-		Object levelName = null;
-		try {
-			levelName = levelNameField.get(dedicatedServerProperties);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		
-		this.levelName = (String) levelName;
 		
 		//Register commands
 		super.registerCommand("transfer", new TransferCommandExeuctor(this), this);

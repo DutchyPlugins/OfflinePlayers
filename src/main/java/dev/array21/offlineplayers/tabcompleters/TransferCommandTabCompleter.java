@@ -1,4 +1,4 @@
-package nl.thedutchmc.offlineplayers.tabcompleters;
+package dev.array21.offlineplayers.tabcompleters;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import nl.thedutchmc.dutchycore.module.commands.ModuleTabCompleter;
+import dev.array21.dutchycore.module.commands.ModuleTabCompleter;
 
 public class TransferCommandTabCompleter implements ModuleTabCompleter {
 

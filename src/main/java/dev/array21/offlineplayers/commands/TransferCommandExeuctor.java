@@ -1,4 +1,4 @@
-package nl.thedutchmc.offlineplayers.commands;
+package dev.array21.offlineplayers.commands;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,11 +13,11 @@ import org.bukkit.entity.Player;
 
 import com.google.common.io.Files;
 
-import nl.thedutchmc.dutchycore.Triple;
-import nl.thedutchmc.dutchycore.module.commands.ModuleCommand;
-import nl.thedutchmc.dutchycore.utils.Utils;
-import nl.thedutchmc.offlineplayers.OfflinePlayers;
-import nl.thedutchmc.offlineplayers.events.PlayerTransferEvent;
+import dev.array21.dutchycore.Triple;
+import dev.array21.dutchycore.module.commands.ModuleCommand;
+import dev.array21.dutchycore.utils.Utils;
+import dev.array21.offlineplayers.OfflinePlayers;
+import dev.array21.offlineplayers.events.PlayerTransferEvent;
 
 /**
  * Executor for:

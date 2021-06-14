@@ -1,9 +1,9 @@
-package nl.thedutchmc.offlineplayers.events;
+package dev.array21.offlineplayers.events;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
-import nl.thedutchmc.dutchycore.module.events.ModuleEvent;
+import dev.array21.dutchycore.module.events.ModuleEvent;
 
 public class PlayerTransferEvent extends ModuleEvent {
 	

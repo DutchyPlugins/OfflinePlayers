@@ -1,74 +1,134 @@
 import org.apache.tools.ant.filters.ReplaceTokens
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     id 'java'
     id 'eclipse'
-    id 'maven-publish'          
+    id 'maven-publish'
+    id 'signing'
+	id "com.github.johnrengelman.shadow" version "7.0.0"
 }
 
-group = 'nl.thedutchmc'
-version = '1.1.1'
+group = 'dev.array21'
+version = '1.2.0'
 
-sourceCompatibility = 1.11
-targetCompatibility = 1.11
+sourceCompatibility = 1.16
+targetCompatibility = 1.16
 
+task processSource(type: Sync) {
+	from sourceSets.main.java
+	inputs.property 'version', version
+	filter(ReplaceTokens, tokens: [VERSION: version])
+	into "$buildDir/src" 
+}
 
-
-processResources {
-    from(sourceSets.main.resources.srcDirs) {
-        filter ReplaceTokens, tokens: [version: version]
-    }
+compileJava {
+	source = processSource.outputs
 }
 
 repositories {
-	jcenter()
-    maven{ url "https://hub.spigotmc.org/nexus/content/repositories/snapshots" }
-    maven{ url "https://oss.sonatype.org/content/repositories/snapshots" }
+	mavenCentral()
+    maven { url "https://hub.spigotmc.org/nexus/content/repositories/snapshots" }
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
 	maven { url 'https://jitpack.io' }
     mavenLocal()
 }
 
 dependencies {
-    //Dev only:
-    //compileOnly 'nl.thedutchmc:dutchycore:0.0.38'
-    
-    //bug in jitpack, cant use nl.thedutchmc here :/
-    compileOnly 'com.github.DutchyPlugins:DutchyCore:0.0.47'
-    
-    //Spigot API
+    compileOnly 'dev.array21:dutchycore:0.1.0'
     compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
+    implementation 'dev.array21:bukkit-reflection-util:1.0'
 }
 
-task ghActions(type: Jar) {
+task ghActions(type: ShadowJar) {
 	description 'GitHub Actions task. Not used for regular development'
 	version = ''
 	archiveClassifier = ''
 	archiveBaseName = 'output'
 
 	from sourceSets.main.output
+	configurations = [project.configurations.runtimeClasspath]
 
 	destinationDirectory = file("$rootDir/actions")
 }
 
+task testJar(type: ShadowJar) {
+	description 'Build a test Jar'
+	archiveClassifier = 'DEV'
+	from sourceSets.main.output
+	configurations = [project.configurations.runtimeClasspath]
+	destinationDirectory = file("$rootDir/../DutchyCore/server/plugins/DutchyCore/modules/")
+}
+
+javadoc.options.addStringOption('Xdoclint:none', '-quiet')
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
 publishing {
-	publications {
-		mavenJava(MavenPublication) {
-			artifactId = 'offlineplayers'
-			from components.java
-			
-			pom {
-				name = 'OfflinePlayers'
-				description = 'OfflinePlayers plugin'
-				url = 'https://thedutchmc.nl'
-				
-				developers {
-					developer {
-						id = 'thedutchmc'
-						name = 'Tobias de Bruijn'
-						email = 't.debruijn@thedutchmc.nl'
-					}	
-				}
-			}	
+	repositories {
+		maven {
+			name = "ossrh"
+			url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+			credentials {
+				username = findProperty('ossrhUsername')
+				password = findProperty('ossrhPassword')
+			}
 		}
 	}
+
+	publications {
+    	mavenJava(MavenPublication) {
+      		from components.java
+      		artifact sourcesJar
+      		artifact javadocJar
+      		
+			pom {
+		    	name = 'OfflinePlayers'
+		    	artifactId = 'offlineplayers'
+		    	packaging = 'jar'
+		    	description = 'Minecaft Spigot OfflinePlayers plugin'
+		    	url = 'https://github.com/DutchyPlugins/OfflinePlayers'
+			
+				scm {
+					connection = 'scm:git:git://github.com/DutchyPlugins/OfflinePlayers.git'
+					developerConnection = 'scm:git:ssh://github.com/DutchyPlugins/OfflinePlayers.git'
+					url = 'https://github.com/DutchyPlugins/OfflinePlayers'
+				}
+		
+		    	licenses {
+		      		license {
+		        		name = 'GPL-v23'
+		        		url = 'https://github.com/DutchyPlugins/OfflinePlayers/blob/master/LICENSE'
+		      		}
+	    		}
+		
+		    	developers {
+		      		developer {
+		        		id = 'tobiasdebruijn'
+		        		name = 'Tobias de Bruijn'
+		        		email = 't.debruijn@array21.dev'
+		      		}
+		    	}
+		    }
+    	}
+	}
+}
+
+signing {
+	if(!System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+	    sign publishing.publications.mavenJava
+	}
+}
+
+processResources  {
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
